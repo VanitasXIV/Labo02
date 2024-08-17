@@ -1,0 +1,26 @@
+// 1.1 Intercambio de valores
+// Escribir un programa que solicite al usuario dos números enteros y luego intercambie los valores de las variables utilizando punteros.
+
+#include <stdio.h>
+
+int main(){
+    int number1;
+    int number2;
+    int *nump1;
+    int *nump2;
+
+    nump1=&number1;
+    nump2=&number2;
+
+    printf("Intercambio de valores\n");
+    printf("Escriba dos numeros enteros:\n");
+    printf("Primer numero:\n");
+    scanf("%d", nump2);
+    printf("Segundo numero:\n");
+    scanf("%d", nump1);
+
+    printf("Numero 1: %d", number1);
+    printf("Numero 2: %d", number2);
+
+    return 0;
+}
