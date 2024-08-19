@@ -3,8 +3,6 @@
 
 int vector[5] = {10, -2, 33, 4, -5};
 int lengthy = sizeof(vector) / sizeof(vector[0]);
-int times=0;
-
 
 
 void printVector(int vector[]) {
