@@ -1,0 +1,45 @@
+//1.1 Ingreso de datos y funci´on por valor
+// Escribe un programa que solicite al usuario ingresar datos para una estructura
+//  que represente una persona (nombre, edad, g´enero, etc.). Luego, pasa esta
+//  estructura a una funci´on por valor que imprima los datos.
+
+//1.2 Funci´on por referencia
+//Modifica el programa anterior para que la funci´on que imprime los datos de la
+//persona acepte un puntero a la estructura en lugar de la estructura misma.
+
+#include <stdio.h>
+
+typedef struct persona {
+    char *name[25];
+    int age;
+    char gender;
+};
+
+
+void printPersona( struct persona *persona) {
+    puts(persona->name);
+    printf("%d anios \n", persona->age);
+    printf("Gender: %c\n", persona->gender);
+
+}
+
+int main(){
+
+struct persona persona;
+
+printf("Por favor ingrese nombre:");
+scanf("%[^\n]s", &persona.name);
+    fflush(stdin);
+printf("Por favor ingrese edad:");
+scanf("%d", &persona.age);
+    fflush(stdin);
+printf("Por favor ingrese género:");
+scanf("%c", &persona.gender);
+    fflush(stdin);
+
+printPersona(&persona);
+
+return 0;
+}
+
+extern struct persona;
