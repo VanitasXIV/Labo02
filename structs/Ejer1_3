@@ -1,0 +1,95 @@
+//1.3 Procesamiento de datos
+//Ampl´ıa el programa para que calcule y muestre la edad promedio de un grupo
+//de personas representadas por estructuras.
+
+
+
+
+#include <stdio.h>
+
+#define LEN 20
+
+int pplQuantity=0;
+struct persona {
+    char name[25];
+    int age;
+    char gender;
+};
+
+void mostrarMenu() {
+    printf("\n--- Men� de Opciones ---\n");
+    printf("1. Cargar Datos\n");
+    printf("2. Calcular promedio de edad\n");
+    printf("5. Salir\n");
+    printf("Seleccione una opci�n: ");
+}
+
+void loadData(struct persona *personas) {
+char answer;
+    do {
+        printf("Ingrese datos de la persona %d:\n", pplQuantity+1);
+        printf("Nombre: ");
+        scanf("%s", &personas[pplQuantity].name);
+        fflush(stdin);
+        printf("Edad: ");
+        scanf("%d", &personas[pplQuantity].age);
+        fflush(stdin);
+        printf("Genero: ");
+        scanf("%c", &personas[pplQuantity].gender);
+        fflush(stdin);
+
+        pplQuantity++;
+
+        printf("Desea ingresar otra persona? (S/N): ");
+        scanf(" %c", &answer);
+    }while(answer== 's' || answer=='S');
+
+}
+
+void averageAge(struct persona personas[]) {
+
+    struct persona *ptr= personas;
+    struct persona *end = personas + pplQuantity;
+
+    if(pplQuantity>0) {
+        float totalAge=0;
+        while(ptr<end) {
+
+            totalAge+=ptr->age;
+            ptr++;
+        }
+        printf("\nEdad promedio de las personas: %f\n", totalAge/pplQuantity);
+    }else {
+        printf("\nNo hay personas registradas.\n");
+    }
+
+}
+
+int main(){
+    int option;
+
+    do {
+        struct persona personas[LEN];
+
+        mostrarMenu();
+        scanf("%d", &option);
+        switch(option) {
+            case 1:
+                loadData(personas);
+                break;
+            case 2:
+                averageAge(personas);
+                break;
+            case 5:
+                printf("Saliendo del programa...\n");
+                break;
+            default:
+                printf("Ingrese una opción valida");
+                break;
+        }
+
+
+    } while (option != 5);
+
+    return 0;
+}
