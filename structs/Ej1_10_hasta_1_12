@@ -1,0 +1,329 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define LEN 20
+
+int pplQuantity=0;
+struct persona {
+    char name[25];
+    int age;
+    char gender;
+};
+
+void validateName(char *str) {
+    bool isValid=true;
+
+    do {
+        if(strlen(str)==0) {
+            isValid=false;
+            printf("El nombre no puede estar vacío. ");
+        }
+        for (int i = 0; i < strlen(str); i++) {
+            if (isdigit(str[i])) {
+                isValid=false;
+                printf("El nombre no puede contener números. ");
+                break;
+            }
+        }
+        if (!isValid) {
+            printf("Ingrese un nombre válido: ");
+            fgets(str, 25, stdin);
+            str[strcspn(str, "\n")] = '\0';
+        }
+    }while(!isValid);
+
+
+}
+
+int validateAge(int age) {
+    while(age < 1 || age >= 110) {
+        printf("Ingrese una edad válida\n");
+        scanf("%d", &age);
+        fflush(stdin);
+    }
+    return age;
+}
+
+
+void printPersona(const struct persona *persona) {
+    puts(persona->name);
+    printf("%d anios \n", persona->age);
+    printf("Gender: %c\n", persona->gender);
+    printf("\n----------------\n");
+
+}
+
+void mostrarMenu() {
+    printf("\n--- Men� de Opciones ---\n");
+    printf("1. Cargar Datos\n");
+    printf("2. Calcular promedio de edad\n");
+    printf("3. Imprimir Datos\n");
+    //printf("3. Agregar Persona\n");
+    printf("4. Quitar Persona\n");
+    printf("5. Ordenar personas por criterio\n");
+    printf("6. Buscar persona\n ");
+    printf("7. Salir\n ");
+    printf("Seleccione una opción: ");
+}
+
+void validateGender(char *gender) {
+    while(!(*gender=='m' || *gender=='M'
+            || *gender=='F' || *gender=='f'
+            || *gender=='N' || *gender=='n')) {
+        printf("\nIngrese un género válido\n");
+        fflush(stdin);
+        scanf("%c", gender);
+
+            }
+}
+
+void loadData(struct persona *personas) {
+char answer;
+    do {
+        printf("Ingrese datos de la persona %d:\n", pplQuantity+1);
+        printf("Nombre: ");
+        fflush(stdin);
+        fgets(personas[pplQuantity].name, 25, stdin);
+        personas[pplQuantity].name[strcspn(personas[pplQuantity].name, "\n")] = '\0';
+        validateName(personas[pplQuantity].name);
+
+        printf("Edad: ");
+        fflush(stdin);
+        scanf("%d", &personas[pplQuantity].age);
+        validateAge(personas[pplQuantity].age);
+
+
+        printf("Genero: M para hombres, F para mujeres, N para nobinario \n");
+        printf("Genero: ");
+        fflush(stdin);
+        scanf("%c", &personas[pplQuantity].gender);
+        validateGender(&personas[pplQuantity].gender);
+
+        pplQuantity++;
+
+        printf("Desea ingresar otra persona? (S/N): ");
+        scanf(" %c", &answer);
+    }while(answer== 's' || answer=='S');
+
+}
+
+void printData(struct persona personas[]) {
+    struct persona *ptr;
+    ptr = personas;
+    struct persona *end;
+    end = personas + pplQuantity;
+
+    if (pplQuantity>0) {
+        while (ptr<end) {
+            printPersona(ptr);
+            ptr++;
+        }
+    }else {
+        printf("\nNo hay personas registradas.\n");
+    }
+}
+
+void averageAge(struct persona personas[]) {
+
+    struct persona *ptr= personas;
+    struct persona *end = personas + pplQuantity; // Importante: si usamos personas + LEN recorrerá todo el arreglo ingresando información basura
+
+
+    if(pplQuantity>0) {
+        float totalAge=0;
+        while(ptr<end) {
+
+            totalAge+=ptr->age;
+            ptr++;
+            //var--> &var Direccion de memoria
+            //var--> *var No funciona, no es puntero
+            //ptr --> &ptr Direccion del propio puntero
+            //ptr --> ptr Devuelve la direccion que guarda
+            //ptr --> *ptr Devuelve el valor que guarda la direccion de memoria a la que apunta
+        }
+        printf("\nEdad promedio de las personas: %f\n", totalAge/pplQuantity);
+    }else {
+        printf("\nNo hay personas registradas.\n");
+    }
+
+}
+
+void deletePeople(struct persona personas[]) {
+    char nameToDelete[25];
+    bool found = 0;
+    printf("Ingrese nombre de la persona a eliminar:\n");
+    fflush(stdin);
+    fgets(nameToDelete, 25, stdin);
+    nameToDelete[strcspn(nameToDelete, "\n")] = '\0'; // Remover el salto de línea
+    validateName(nameToDelete);
+
+    struct persona *ptr = personas;
+    struct persona *end = personas +pplQuantity;
+
+    // Buscar la persona a eliminar
+    while (ptr < end) {
+        if (strcmp(ptr->name, nameToDelete) == 0) {
+            found = 1;
+            break;
+        }
+        ptr++;
+    }
+
+
+    if (found) {
+        struct persona *next = ptr + 1;
+        while (next < end) {
+            *ptr = *next;  // Sobreescribe la persona actual con la siguiente
+            ptr++;
+            next++;
+        }
+        pplQuantity--;
+        printf("Persona eliminada.\n");
+    } else {
+        printf("Persona no encontrada.\n");
+    }
+}
+
+//Método de burbujeo, se va a ver en la clase de ordenamiento
+void sortPeopleByName(struct persona personas[]) {
+    struct persona *end = personas + pplQuantity;
+    bool swapped;
+
+    do {
+        swapped = false;
+
+        for (struct persona *ptr = personas; ptr < end - 1; ptr++) {
+            struct persona *next = ptr + 1;
+
+            if (strcmp(ptr->name, next->name) > 0) {
+                // Intercambiar los valores de las estructuras
+                struct persona temp = *ptr;
+                *ptr = *next;
+                *next = temp;
+
+                swapped = true;
+            }
+        }
+
+        // Reduce el rango
+        end--;
+
+    } while (swapped);
+
+    printf("\nPersonas ordenadas por nombre.\n");
+}
+
+void sortPeopleByAge(struct persona personas[]) {
+    bool swapped;
+    struct persona *end = personas + pplQuantity;
+    struct persona *ptr = personas;
+
+    do {
+        swapped = false;
+
+        for (; ptr < end - 1; ptr++) {
+            struct persona *next = ptr + 1;
+
+            if (ptr->age > next->age) {
+                struct persona temp = *ptr;
+                *ptr = *next;
+                *next = temp;
+
+                swapped = true;
+            }
+        }
+        end--;
+
+    } while (swapped);
+
+    printf("\nPersonas ordenadas por edad.\n");
+}
+
+void searchPeople(struct persona *personas) {
+    char nameToSearch[25];
+    bool found = 0;
+    printf("Ingrese nombre de la persona a encontrar:\n");
+    scanf("%s", &nameToSearch);
+    fflush(stdin);
+
+    struct persona *ptr = personas;
+    struct persona *end = personas +pplQuantity;
+
+    while (ptr < end) {
+        if (strcmp(ptr->name, nameToSearch) == 0) {
+            found = 1;
+            break;
+        }
+        ptr++;
+    }
+
+
+    if (found) {
+        printPersona(ptr);
+    } else {
+        printf("Persona no encontrada.\n");
+    }
+}
+
+int main(){
+    int option;
+
+    do {
+        struct persona personas[LEN];
+
+        mostrarMenu();
+        scanf("%d", &option);
+        switch(option) {
+            case 1:
+                loadData(personas);
+                break;
+            case 2:
+                averageAge(personas);
+                break;
+            case 3:
+                printData(personas);
+                break;
+            case 4:
+                deletePeople(personas);
+                break;
+            case 5:
+                int suboption;
+                do {
+
+                    printf("¿Qué criterio de ordenamiento quiere usar?:\n ");
+                    printf("1. Nombre\n ");
+                    printf("2. Edad\n ");
+                    printf("3. Regresar\n ");
+                    scanf("%d",&suboption);
+                    fflush(stdin);
+                    switch (suboption) {
+                        case 1:
+                            sortPeopleByName(personas);
+                        break;
+                        case 2:
+                            sortPeopleByAge(personas);
+                        break;
+                        case 3:
+                            printf("Regresando");
+                        default:
+                            printf("Ingrese una opción valida");
+                        break;
+                    }
+                }while (suboption !=3);
+            case 6:
+                searchPeople(personas);
+            case 7:
+                printf("Saliendo del programa...\n");
+                break;
+            default:
+                printf("Ingrese una opción valida");
+                break;
+        }
+
+
+    } while (option != 7);
+
+    return 0;
+}
