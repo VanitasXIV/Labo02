@@ -226,6 +226,7 @@ void saveData(struct notebook *notebooks) {
         }
     }
     fclose(pFile);
+    printf("Datos guardados");
 
     pFile = fopen("notebooks.dat","wb");
     if(pFile==NULL) {
